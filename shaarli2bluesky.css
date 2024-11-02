@@ -1,0 +1,46 @@
+.shaarli2bluesky-configure {
+  padding: 15px;
+  background: #f2f2f2;
+  border: 1px solid #ddd;
+}
+.page-form .shaarli2bluesky-configure {
+  width: 90%;
+  margin: auto;
+}
+
+.shaarli2bluesky-hidden {
+  display: none;
+}
+
+.shaarli2bluesky-button {
+  background: none;
+  border: none;
+  color: #4ea2df;
+}
+.shaarli2bluesky-button:hover,
+.shaarli2bluesky-button:focus {
+  text-decoration: underline;
+}
+
+.shaarli2bluesky-url {
+  color: #4ea2df;
+}
+.shaarli2bluesky-tag {
+  color: #d9e1e8;
+}
+
+.shaarli2bluesky-preview-wrapper {
+  margin: 10px 0;
+}
+.shaarli2bluesky-preview {
+  max-width: 580px;
+  margin: 5px 0;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #282C37;
+  color: #fff;
+  text-align: left;
+}
+.shaarli2bluesky-preview a {
+  color: #4ea2df;
+}

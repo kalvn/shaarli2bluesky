@@ -1,0 +1,6 @@
+description="Automatically post your links from Shaarli to Bluesky."
+parameters="BLUESKY_USERNAME;BLUESKY_PASSWORD;BLUESKY_MESSAGE_FORMAT;BLUESKY_REPLACE_URL_BY_PERMALINK_WHEN_TRUNCATING"
+parameter.BLUESKY_USERNAME="Your Bluesky handle"
+parameter.BLUESKY_PASSWORD="The application password to use. DO NOT use your default password, create a new specific application password instead in Bluesky settings"
+parameter.BLUESKY_MESSAGE_FORMAT="Placeholders: \${url} \${permalink} \${title} \${tags} \${description}"
+parameter.BLUESKY_REPLACE_URL_BY_PERMALINK_WHEN_TRUNCATING="If set to \"true\", when a message is too long to be published as is, the URL is replaced by the permalink so that your Bluesky followers have a chance to read the full message on your Shaarli."

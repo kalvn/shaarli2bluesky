@@ -1,0 +1,23 @@
+<div class="shaarli2bluesky">
+  <input type="checkbox" ##checked## name="shaarli2bluesky-message" id="shaarli2bluesky-enable-##id##" class="filled-in">
+  <label for="shaarli2bluesky-enable-##id##">Publish on Bluesky</label> - <button type="button" class="shaarli2bluesky-button">more</button>
+
+  <div class="shaarli2bluesky-configure shaarli2bluesky-hidden">
+    <div class="shaarli2bluesky-modify-format">
+      <label for="shaarli2bluesky-format-##id##">Modify the format of your message</label>
+      <div><small>Available placeholders: ${url}, ${permalink}, ${title}, ${tags}, ${description}, ${cw}</small></div>
+      <input type="text" value="##shaarli2bluesky-format##" name="shaarli2bluesky-format" id="shaarli2bluesky-format-##id##">
+    </div>
+    <div class="shaarli2bluesky-preview-wrapper">
+      <div>Preview</div>
+      <div><small>This is a just a simple preview, the result might be slightly different. No max length truncation will be done in this preview.</small></div>
+      <div class="shaarli2bluesky-preview shaarli2bluesky-preview-has-cw-hidden">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="shaarli2bluesky-parameters shaarli2bluesky-hidden">
+  <span class="shaarli2bluesky-parameter-max-length">##max-length##</span>
+  <span class="shaarli2bluesky-parameter-tags-separator">##tags-separator##</span>
+  <span class="shaarli2bluesky-parameter-is-note">##is-note##</span>
+</div>

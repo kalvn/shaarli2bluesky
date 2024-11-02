@@ -1,0 +1,24 @@
+{
+  "name": "kalvn/shaarli2bluesky",
+  "description": "Automatically post your links from Shaarli to Bluesky.",
+  "type": "project",
+  "license": "MIT",
+  "homepage": "https://github.com/kalvn/shaarli2bluesky",
+  "support": {
+    "issues": "https://github.com/kalvn/shaarli2bluesky/issues"
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  },
+  "scripts": {
+    "test": "phpunit tests"
+  }
+}
