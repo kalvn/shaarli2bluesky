@@ -23,14 +23,14 @@ require_once 'src/BlueskyUtils.php';
 /**
  * The default message format if none is specified.
  */
-const MESSAGE_DEFAULT_FORMAT = '#Shaarli : ${title} ${url} ${tags}';
+const SHAARLI2BLUESKY_MESSAGE_DEFAULT_FORMAT = '#Shaarli : ${title} ${url} ${tags}';
 
-const POST_PARAM_MESSAGE = 'shaarli2bluesky-message';
-const POST_PARAM_MESSAGE_FORMAT = 'shaarli2bluesky-format';
+const SHAARLI2BLUESKY_POST_PARAM_MESSAGE = 'shaarli2bluesky-message';
+const SHAARLI2BLUESKY_POST_PARAM_MESSAGE_FORMAT = 'shaarli2bluesky-format';
 
-const MESSAGE_MAX_LENGTH = 300;
+const SHAARLI2BLUESKY_MESSAGE_MAX_LENGTH = 300;
 
-const DIRECTORY_PATH = __DIR__;
+const SHAARLI2BLUESKY_DIRECTORY_PATH = __DIR__;
 
 /**
  * Init function: check settings, and set default format.
@@ -42,7 +42,7 @@ const DIRECTORY_PATH = __DIR__;
 function shaarli2bluesky_init ($conf) {
     $format = $conf->get('plugins.BLUESKY_MESSAGE_FORMAT');
     if (empty($format)) {
-        $conf->set('plugins.BLUESKY_MESSAGE_FORMAT', MESSAGE_DEFAULT_FORMAT);
+        $conf->set('plugins.BLUESKY_MESSAGE_FORMAT', SHAARLI2BLUESKY_MESSAGE_DEFAULT_FORMAT);
     }
 
     if (!BlueskyUtils::isConfigValid($conf)) {
@@ -93,7 +93,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     // No message without config, for private links, or on edit.
     if (!BlueskyUtils::isConfigValid($conf)
         || $data['private']
-        || !isset($_POST[POST_PARAM_MESSAGE])
+        || !isset($_POST[SHAARLI2BLUESKY_POST_PARAM_MESSAGE])
     ) {
         return $data;
     }
@@ -103,7 +103,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     $tagsSeparator = $conf->get('general.tags_separator', ' ');
     $blueskyUsername = $conf->get('plugins.BLUESKY_USERNAME');
     $blueskyPassword = $conf->get('plugins.BLUESKY_PASSWORD');
-    $blueskyMessageFormat = isset($_POST[POST_PARAM_MESSAGE_FORMAT]) ? $_POST[POST_PARAM_MESSAGE_FORMAT] : $conf->get('plugins.BLUESKY_MESSAGE_FORMAT', MESSAGE_DEFAULT_FORMAT);
+    $blueskyMessageFormat = isset($_POST[SHAARLI2BLUESKY_POST_PARAM_MESSAGE_FORMAT]) ? $_POST[SHAARLI2BLUESKY_POST_PARAM_MESSAGE_FORMAT] : $conf->get('plugins.BLUESKY_MESSAGE_FORMAT', SHAARLI2BLUESKY_MESSAGE_DEFAULT_FORMAT);
     $blueskyReplaceUrlByPermalinkWhenTruncating = $conf->get('plugins.BLUESKY_REPLACE_URL_BY_PERMALINK_WHEN_TRUNCATING', 'false') === 'true';
 
     $data['permalink'] = index_url($_SERVER) . 'shaare/' . $data['shorturl'];
@@ -113,7 +113,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
         $data['url'] = $data['permalink'];
     }
 
-    $message = new BlueskyMessage($data, $blueskyMessageFormat, $tagsSeparator, MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
+    $message = new BlueskyMessage($data, $blueskyMessageFormat, $tagsSeparator, SHAARLI2BLUESKY_MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
 
     $client = new BlueskyClient($blueskyUsername, $blueskyPassword);
 
@@ -146,7 +146,7 @@ function hook_shaarli2bluesky_render_editlink ($data, $conf) {
     $private = $conf->get('privacy.default_private_links', false);
     $checked = $data['link_is_new'] && !$private;
 
-    $html = file_get_contents(DIRECTORY_PATH . '/edit_link.html');
+    $html = file_get_contents(SHAARLI2BLUESKY_DIRECTORY_PATH . '/edit_link.html');
 
     $html = str_replace([
       '##checked##',
@@ -157,9 +157,9 @@ function hook_shaarli2bluesky_render_editlink ($data, $conf) {
       '##is-note##',
     ], [
       $checked ? 'checked="checked"' : '',
-      $conf->get('plugins.BLUESKY_MESSAGE_FORMAT', MESSAGE_DEFAULT_FORMAT),
+      $conf->get('plugins.BLUESKY_MESSAGE_FORMAT', SHAARLI2BLUESKY_MESSAGE_DEFAULT_FORMAT),
       uniqid(),
-      MESSAGE_MAX_LENGTH,
+      SHAARLI2BLUESKY_MESSAGE_MAX_LENGTH,
       $conf->get('general.tags_separator', ' '),
       BlueskyUtils::isLinkNote($data['link']) ? 'true' : 'false',
     ], $html);
