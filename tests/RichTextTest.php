@@ -9,7 +9,7 @@ final class RichTextTest extends TestCase {
 
   // Links
   public function testTextWithLink (): void {
-    $rt = new RichText([ 'text' => 'My website: https://kalvn.net?' ]);
+    $rt = new BlueskyRichText([ 'text' => 'My website: https://kalvn.net?' ]);
 
     $facets = $rt->generateFacets();
 
@@ -31,7 +31,7 @@ final class RichTextTest extends TestCase {
 
   // Tags
   public function testTextWithTagInTheMiddleAndComplexEmoji (): void {
-    $rt = new RichText([ 'text' => 'Super 👨‍👩‍👧‍👦 #emoji ?' ]);
+    $rt = new BlueskyRichText([ 'text' => 'Super 👨‍👩‍👧‍👦 #emoji ?' ]);
 
     $facets = $rt->generateFacets();
 
@@ -52,7 +52,7 @@ final class RichTextTest extends TestCase {
   }
 
   public function testTextStartsWithTag (): void {
-    $rt = new RichText([ 'text' => '#how are you?' ]);
+    $rt = new BlueskyRichText([ 'text' => '#how are you?' ]);
 
     $facets = $rt->generateFacets();
 
@@ -73,7 +73,7 @@ final class RichTextTest extends TestCase {
   }
 
   public function testTextWithMultipleTags (): void {
-    $rt = new RichText([ 'text' => '#this is a good #day to code in #JavaScript !' ]);
+    $rt = new BlueskyRichText([ 'text' => '#this is a good #day to code in #JavaScript !' ]);
 
     $facets = $rt->generateFacets();
 
@@ -118,7 +118,7 @@ final class RichTextTest extends TestCase {
   }
 
   public function testTextWithEdgeCaseTags (): void {
-    $rt = new RichText([ 'text' => 'Ok so #this_ have #some-funny stuff #in_it_! and a last one #()(3436508-(àéèç🙈)àèçéà\'é"à)àç)' ]);
+    $rt = new BlueskyRichText([ 'text' => 'Ok so #this_ have #some-funny stuff #in_it_! and a last one #()(3436508-(àéèç🙈)àèçéà\'é"à)àç)' ]);
 
     $facets = $rt->generateFacets();
 

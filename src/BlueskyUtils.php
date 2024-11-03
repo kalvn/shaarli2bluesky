@@ -1,5 +1,5 @@
 <?php
-class Utils {
+class BlueskyUtils {
 
   /**
    * Determines whether the configuration is valid or not.

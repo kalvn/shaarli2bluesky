@@ -1,10 +1,11 @@
 <?php
-require_once 'RichText.php';
+require_once __DIR__ . '/BlueskyRichText.php';
+require_once __DIR__ . '/BlueskyUtils.php';
 
 /**
  * Represent a Shaarli message to be posted on Bluesky.
  */
-class Message {
+class BlueskyMessage {
   const MESSAGE_ALLOWED_PLACEHOLDERS = [
     'url',
     'permalink',
@@ -19,7 +20,7 @@ class Message {
   private bool $replaceUrlByPermalinkWhenTruncating = false;
 
   public function __construct (array $link, string $format, string $tagDelimiter, int $maxGraphemeLength, bool $replaceUrlByPermalinkWhenTruncating = false) {
-    $link['tags'] = Utils::tagify($link['tags'], $tagDelimiter);
+    $link['tags'] = BlueskyUtils::tagify($link['tags'], $tagDelimiter);
 
     $this->link = $link;
     $this->format = $format;
@@ -27,8 +28,8 @@ class Message {
     $this->replaceUrlByPermalinkWhenTruncating = $replaceUrlByPermalinkWhenTruncating;
   }
 
-  public function generateText (): RichText {
-    return new RichText([ 'text' => $this->getTruncatedFormattedText() ]);
+  public function generateText (): BlueskyRichText {
+    return new BlueskyRichText([ 'text' => $this->getTruncatedFormattedText() ]);
   }
 
   public function getFormattedText (array $placeholdersToShorten = [], bool $replaceUrlByPermalink = false): string {
@@ -39,7 +40,7 @@ class Message {
       if (!array_key_exists($placeholder, $placeholdersToShorten)) {
         $output = str_replace('${' . $placeholder . '}', $placeholderValue, $output);
       } else {
-        $output = str_replace('${' . $placeholder . '}', Utils::shorten($placeholderValue, $placeholdersToShorten[$placeholder]), $output);
+        $output = str_replace('${' . $placeholder . '}', BlueskyUtils::shorten($placeholderValue, $placeholdersToShorten[$placeholder]), $output);
       }
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HttpRequest
+ * BlueskyHttpRequest
  *
  * Adapted from:
  * @author Maxence Cauderlier
@@ -13,9 +13,9 @@
  */
 
 /**
- * HttpRequest is a simple HTTP client.
+ * BlueskyHttpRequest is a simple HTTP client.
  */
-class HttpRequest {
+class BlueskyHttpRequest {
 
   public $apiURL;
   public $domainURL;

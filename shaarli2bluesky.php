@@ -16,9 +16,9 @@ use Shaarli\Plugin\PluginManager;
 use Shaarli\Render\TemplatePage;
 
 require_once 'src/BlueskyClient.php';
-require_once 'src/RichText.php';
-require_once 'src/Message.php';
-require_once 'src/Utils.php';
+require_once 'src/BlueskyRichText.php';
+require_once 'src/BlueskyMessage.php';
+require_once 'src/BlueskyUtils.php';
 
 /**
  * The default message format if none is specified.
@@ -45,7 +45,7 @@ function shaarli2bluesky_init ($conf) {
         $conf->set('plugins.BLUESKY_MESSAGE_FORMAT', MESSAGE_DEFAULT_FORMAT);
     }
 
-    if (!Utils::isConfigValid($conf)) {
+    if (!BlueskyUtils::isConfigValid($conf)) {
         return array('Please set up your Bluesky parameters in plugin administration page.');
     }
 }
@@ -91,7 +91,7 @@ function hook_shaarli2bluesky_render_footer ($data, $conf) {
  */
 function hook_shaarli2bluesky_save_link ($data, $conf) {
     // No message without config, for private links, or on edit.
-    if (!Utils::isConfigValid($conf)
+    if (!BlueskyUtils::isConfigValid($conf)
         || $data['private']
         || !isset($_POST[POST_PARAM_MESSAGE])
     ) {
@@ -109,11 +109,11 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     $data['permalink'] = index_url($_SERVER) . 'shaare/' . $data['shorturl'];
 
     // If the link is a note, we use the permalink as the url.
-    if(Utils::isLinkNote($data)){
+    if(BlueskyUtils::isLinkNote($data)){
         $data['url'] = $data['permalink'];
     }
 
-    $message = new Message($data, $blueskyMessageFormat, $tagsSeparator, MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
+    $message = new BlueskyMessage($data, $blueskyMessageFormat, $tagsSeparator, MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
 
     $client = new BlueskyClient($blueskyUsername, $blueskyPassword);
 
@@ -139,7 +139,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
  * @return array $data with `edit_link_plugin` placeholder filled.
  */
 function hook_shaarli2bluesky_render_editlink ($data, $conf) {
-    if (!Utils::isConfigValid($conf)) {
+    if (!BlueskyUtils::isConfigValid($conf)) {
         return $data;
     }
 
@@ -161,7 +161,7 @@ function hook_shaarli2bluesky_render_editlink ($data, $conf) {
       uniqid(),
       MESSAGE_MAX_LENGTH,
       $conf->get('general.tags_separator', ' '),
-      Utils::isLinkNote($data['link']) ? 'true' : 'false',
+      BlueskyUtils::isLinkNote($data['link']) ? 'true' : 'false',
     ], $html);
 
     $data['edit_link_plugin'][] = $html;

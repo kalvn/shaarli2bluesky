@@ -9,17 +9,17 @@ final class UtilsTest extends TestCase {
   }
 
   public function testIsLinkNote (): void {
-    $this->assertTrue(Utils::isLinkNote([
+    $this->assertTrue(BlueskyUtils::isLinkNote([
       'url' => '/shaare/i6lwMw'
     ]));
 
-    $this->assertFalse(Utils::isLinkNote([
+    $this->assertFalse(BlueskyUtils::isLinkNote([
       'url' => 'https://github.com/kalvn/shaarli2bluesky'
     ]));
   }
 
   public function testExtractTags (): void {
-    $matches = Utils::extractTags('a #a1a_1 bonj', true);
+    $matches = BlueskyUtils::extractTags('a #a1a_1 bonj', true);
     $this->assertEquals([
       [
         ['#a1a_1', 2]
@@ -31,7 +31,7 @@ final class UtilsTest extends TestCase {
   }
 
   public function testExtractUrls (): void {
-    $matches = Utils::extractUrls('My site\'s URL is: https://kalvn.net (I also post links at https://links.kalvn.net/about?foo=bar).', true);
+    $matches = BlueskyUtils::extractUrls('My site\'s URL is: https://kalvn.net (I also post links at https://links.kalvn.net/about?foo=bar).', true);
 
     $this->assertEquals([
       [

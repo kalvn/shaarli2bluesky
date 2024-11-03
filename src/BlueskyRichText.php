@@ -1,12 +1,12 @@
 <?php
-require_once 'Utils.php';
+require_once __DIR__ . '/BlueskyUtils.php';
 
 /**
  * Represent a rich text that possibly includes links and tags.
  *
  * Inspired by https://docs.bsky.app/docs/advanced-guides/post-richtext
  */
-class RichText {
+class BlueskyRichText {
   private string $text;
 
   public function __construct (array $options) {
@@ -17,7 +17,7 @@ class RichText {
     $facets = [];
 
     // Links - starts with http(s). Cannot end with . ! ? )
-    $linksMatches = Utils::extractUrls($this->text, true);
+    $linksMatches = BlueskyUtils::extractUrls($this->text, true);
 
     if (count($linksMatches) >= 2) {
       foreach ($linksMatches[0] as $match) {
@@ -40,7 +40,7 @@ class RichText {
     }
 
     // Tags - must just end with letter or digit and contain at least 1 letter
-    $tagsMatches = Utils::extractTags($this->text, true);
+    $tagsMatches = BlueskyUtils::extractTags($this->text, true);
 
     if (count($tagsMatches) >= 2) {
       foreach ($tagsMatches[0] as $match) {

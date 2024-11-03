@@ -1,6 +1,6 @@
 <?php
-require_once 'HttpRequest.php';
-require_once 'RichText.php';
+require_once __DIR__ . '/BlueskyHttpRequest.php';
+require_once __DIR__ . '/BlueskyRichText.php';
 
 class BlueskyClient {
 
@@ -22,7 +22,7 @@ class BlueskyClient {
   private $password;
 
   public function __construct ($username, $password) {
-    $this->http = new HttpRequest($this->domain);
+    $this->http = new BlueskyHttpRequest($this->domain);
     $this->username = $username;
     $this->password = $password;
   }
@@ -47,7 +47,7 @@ class BlueskyClient {
     return $session['accessJwt'];
   }
 
-  public function postMessage (RichText $message): void {
+  public function postMessage (BlueskyRichText $message): void {
     $accessToken = $this->createSession();
 
     if (is_null($accessToken)) {
