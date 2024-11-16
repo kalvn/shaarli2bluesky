@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/BlueskyUtils.php';
+require_once __DIR__ . '/BlueskyClient.php';
 
 /**
  * Represent a rich text that possibly includes links and tags.
@@ -8,6 +9,7 @@ require_once __DIR__ . '/BlueskyUtils.php';
  */
 class BlueskyRichText {
   private string $text;
+  private array $urls = [];
 
   public function __construct (array $options) {
     $this->text = $options['text'];
@@ -36,6 +38,8 @@ class BlueskyRichText {
             ]
           ]
         ]);
+
+        array_push($this->urls, $link);
       }
     }
 
@@ -63,6 +67,73 @@ class BlueskyRichText {
     }
 
     return $facets;
+  }
+
+  public function generateEmbed (BlueskyClient $client): array | null {
+    if (count($this->urls) === 0) {
+      return null;
+    }
+
+    $url = $this->urls[0];
+
+    $embed = [
+      '$type' => 'app.bsky.embed.external',
+      'external' => [
+        'uri' => $url
+      ]
+    ];
+
+    $ctx = stream_context_create(array('http'=> [
+        'timeout' => 15
+      ]
+    ));
+
+    // $linkHtml = $http->get($url);
+    $linkHtml = file_get_contents($url, false, $ctx);
+
+    if ($linkHtml === null) {
+      return null;
+    }
+
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument();
+    $doc->loadHTML($linkHtml);
+    libxml_clear_errors();
+    $xpath = new DOMXPath($doc);
+
+    // Get title
+    $entries = $xpath->evaluate("//meta[@property='og:title']/@content", $doc);
+    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
+      $embed['external']['title'] = trim($entries->item(0)->value);
+    }
+
+    // Get description
+    $entries = $xpath->evaluate("//meta[@property='og:description']/@content", $doc);
+    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
+      $embed['external']['description'] = trim($entries->item(0)->value);
+    }
+
+    // Get image
+    $entries = $xpath->evaluate("//meta[@property='og:image']/@content", $doc);
+    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
+      $imageUrl = $entries->item(0)->value;
+
+      $entries = $xpath->evaluate("//meta[@property='og:image:type']/@content", $doc);
+      if ($entries instanceof DOMNodeList && $entries->count() > 0) {
+        $imageMimeType = $entries->item(0)->value;
+      }
+
+      $imageData = file_get_contents($imageUrl, false, $ctx);
+      $imageMimeType = $imageMimeType ?? mime_content_type($imageData);
+
+      if ($imageData !== false) {
+        $uploadResponse = $client->uploadBlob($imageData, $imageMimeType);
+
+        $embed['external']['thumb'] = $uploadResponse['blob'];
+      }
+    }
+
+    return $embed;
   }
 
   public function getText (): string {

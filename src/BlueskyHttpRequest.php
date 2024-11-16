@@ -17,12 +17,11 @@
  */
 class BlueskyHttpRequest {
 
+  public $baseUrl;
   public $apiURL;
-  public $domainURL;
 
-  public function __construct ($domain) {
-    $this->domainURL = 'https://' . $domain;
-    $this->apiURL = '/xrpc';
+  public function __construct ($baseUrl) {
+    $this->baseUrl = $baseUrl ?? '';
   }
 
   /**
@@ -171,7 +170,7 @@ class BlueskyHttpRequest {
     $defaultsOpts = [
       CURLOPT_SSL_VERIFYPEER => false,
       CURLOPT_HTTPHEADER     => $headers,
-      CURLOPT_URL            => $this->domainURL . $url,
+      CURLOPT_URL            => $this->baseUrl . $url,
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_TIMEOUT        => 30,
       CURLOPT_CONNECTTIMEOUT => 30

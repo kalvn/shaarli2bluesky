@@ -4,7 +4,7 @@ require_once __DIR__ . '/BlueskyRichText.php';
 
 class BlueskyClient {
 
-  private $domain = 'bsky.social';
+  private $domain = 'https://bsky.social';
 
   /**
    * The HTTP instance.
@@ -22,7 +22,7 @@ class BlueskyClient {
   private $password;
 
   public function __construct ($username, $password) {
-    $this->http = new BlueskyHttpRequest($this->domain);
+    $this->http = new BlueskyHttpRequest($this->domain . '/xrpc');
     $this->username = $username;
     $this->password = $password;
   }
@@ -59,10 +59,32 @@ class BlueskyClient {
       'collection' => 'app.bsky.feed.post',
       'record' => [
         'text' => $message->getText(),
-        'createdAt' => date(DATE_ATOM),
-        'facets' => $message->generateFacets()
+        'createdAt' => date(DATE_ATOM)
       ]
     ];
+
+    try {
+      $facets = $message->generateFacets();
+      $requestBody['record']['facets'] = $facets;
+    } catch (Throwable $e) {
+      $errorMessage = '[shaarli2bluesky] Could not make links and tags dynamic: [' . $e->getMessage() . '].';
+      error_log($errorMessage);
+      if (session_status() == PHP_SESSION_ACTIVE) {
+        $_SESSION['errors'][] = $errorMessage;
+      }
+    }
+
+    try {
+      $that = $this;
+      $embed = $message->generateEmbed($that);
+      $requestBody['record']['embed'] = $embed;
+    } catch (Throwable $e) {
+      $errorMessage = '[shaarli2bluesky] Could not highlight links with Open Graph: [' . $e->getMessage() . '].';
+      error_log($errorMessage);
+      if (session_status() == PHP_SESSION_ACTIVE) {
+        $_SESSION['errors'][] = $errorMessage;
+      }
+    }
 
     $postResponse = $this->http->post(
       $this->http->apiURL . '/com.atproto.repo.createRecord',
@@ -76,5 +98,28 @@ class BlueskyClient {
     if (array_key_exists('error', $postResponse)) {
       throw new Exception('Error from Bluesky: [' . $postResponse['error'] . '] [' . $postResponse['message'] . '].');
     }
+  }
+
+  public function uploadBlob ($blob, $mimeType): array | null {
+    $accessToken = $this->createSession();
+
+    if (is_null($accessToken)) {
+      throw new Exception('Access token was null.');
+    }
+
+    $postResponse = $this->http->post(
+      $this->http->apiURL . '/com.atproto.repo.uploadBlob',
+      [
+        'Authorization: Bearer ' . $accessToken,
+        'Content-Type: ' . $mimeType
+      ],
+      $blob
+    );
+
+    if (array_key_exists('error', $postResponse)) {
+      throw new Exception('Error from Bluesky: [' . $postResponse['error'] . '] [' . $postResponse['message'] . '].');
+    }
+
+    return $postResponse;
   }
 }
