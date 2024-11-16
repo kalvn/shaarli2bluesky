@@ -114,23 +114,29 @@ class BlueskyRichText {
     }
 
     // Get image
-    $entries = $xpath->evaluate("//meta[@property='og:image']/@content", $doc);
-    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-      $imageUrl = $entries->item(0)->value;
-
-      $entries = $xpath->evaluate("//meta[@property='og:image:type']/@content", $doc);
+    try {
+      $entries = $xpath->evaluate("//meta[@property='og:image']/@content", $doc);
       if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-        $imageMimeType = $entries->item(0)->value;
+        $imageUrl = $entries->item(0)->value;
+
+        $entries = $xpath->evaluate("//meta[@property='og:image:type']/@content", $doc);
+        if ($entries instanceof DOMNodeList && $entries->count() > 0) {
+          $imageMimeType = $entries->item(0)->value;
+        }
+
+        $imageData = file_get_contents($imageUrl, false, $ctx);
+        $imageMimeType = $imageMimeType ?? mime_content_type($imageData);
+
+        if ($imageData !== false) {
+          $uploadResponse = $client->uploadBlob($imageData, $imageMimeType);
+
+          $embed['external']['thumb'] = $uploadResponse['blob'];
+        }
       }
-
-      $imageData = file_get_contents($imageUrl, false, $ctx);
-      $imageMimeType = $imageMimeType ?? mime_content_type($imageData);
-
-      if ($imageData !== false) {
-        $uploadResponse = $client->uploadBlob($imageData, $imageMimeType);
-
-        $embed['external']['thumb'] = $uploadResponse['blob'];
-      }
+    } catch (Exception $e) {
+      // Image failed to be processed, ignoring.
+      $errorMessage = '[shaarli2bluesky] Could not download or process Open Graph image: [' . $e->getMessage() . '].';
+      error_log($errorMessage);
     }
 
     return $embed;
