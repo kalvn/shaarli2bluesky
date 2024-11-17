@@ -18,6 +18,7 @@ jobs:
       - name: Test
         uses: php-actions/composer@v6
         with:
+          php_extensions: intl curl
           command: test
 
       - name: Remove dev dependencies

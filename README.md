@@ -8,7 +8,9 @@ This plugin allows you to automatically publish links you post on [Bluesky](http
 ## Requirements
 
 - PHP 8.0 minimum
-- PHP cURL extension
+- PHP extensions
+  - intl
+  - curl
 - Shaarli >= v0.8.1 in public mode (which is the default mode)
 
 
