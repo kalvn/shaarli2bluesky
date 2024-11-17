@@ -15,21 +15,21 @@ jobs:
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
-          php_version: "7.4"
+          php_version: "8.0"
 
       - name: Test
         uses: php-actions/composer@v6
         with:
+          php_version: "8.0"
           php_extensions: intl curl
           command: test
-          php_version: "7.4"
 
       - name: Remove dev dependencies
         uses: php-actions/composer@v6
         with:
+          php_version: "8.0"
           command: update
           args: --no-dev
-          php_version: "7.4"
 
       - name: Package
         run: |
