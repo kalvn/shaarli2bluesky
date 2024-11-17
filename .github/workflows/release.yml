@@ -30,8 +30,8 @@ jobs:
       - name: Package
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-          zip -r shaarli2bluesky.$tag.zip src vendor edit_link.html shaarli2bluesky.*
-          tar -cvf shaarli2bluesky.$tag.tar.gz src vendor edit_link.html shaarli2bluesky.*
+          zip -r shaarli2bluesky.$tag.zip src vendor edit_link.html shaarli2bluesky.{js,css,meta,php}
+          tar -cvf shaarli2bluesky.$tag.tar.gz src vendor edit_link.html shaarli2bluesky.{js,css,meta,php}
 
       - name: Create release
         env:
