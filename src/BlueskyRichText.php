@@ -99,9 +99,13 @@ class BlueskyRichText {
 
     // Get title
     $title = $linkInfo['ogTitle'] ?? $linkInfo['title'];
-    if ($title !== null) {
-      $embed['external']['title'] = $title;
+
+    // Title is mandatory. If missing, embed is skipped entirely
+    if ($title === null) {
+      return null;
     }
+
+    $embed['external']['title'] = $title;
 
     // Get description
     $description = $linkInfo['ogDescription'];
