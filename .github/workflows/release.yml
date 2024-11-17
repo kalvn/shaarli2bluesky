@@ -14,6 +14,8 @@ jobs:
 
       - name: Install dependencies
         uses: php-actions/composer@v6
+        with:
+          php_version: "8.0"
 
       - name: Test
         uses: php-actions/composer@v6
@@ -31,7 +33,7 @@ jobs:
         run: |
           tag="${GITHUB_REF#refs/tags/}"
           zip -r shaarli2bluesky.$tag.zip src vendor edit_link.html shaarli2bluesky.{js,css,meta,php}
-          tar -cvf shaarli2bluesky.$tag.tar.gz src vendor edit_link.html shaarli2bluesky.{js,css,meta,php}
+          tar -czvf shaarli2bluesky.$tag.tar.gz src vendor edit_link.html shaarli2bluesky.{js,css,meta,php}
 
       - name: Create release
         env:
