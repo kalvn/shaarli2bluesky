@@ -7,7 +7,7 @@ This plugin allows you to automatically publish links you post on [Bluesky](http
 
 ## Requirements
 
-- PHP 8.0 minimum
+- PHP 7.4 minimum
 - PHP extensions
   - intl
   - curl
@@ -30,7 +30,7 @@ Run the following command from within the `/plugins` directory:
 ```bash
 $ wget https://github.com/kalvn/shaarli2bluesky/archive/refs/tags/v0.0.5.tar.gz
 $ tar -xvzf v0.0.5.tar.gz
-$ mv shaarli2bluesky-0.0.5 shaarli2bluesky
+$ mkdir shaarli2bluesky
 $ rm v0.0.5.tar.gz
 ```
 
