@@ -1,4 +1,6 @@
 <?php
+use PHPHtmlParser\Dom;
+
 class BlueskyUtils {
 
   /**
@@ -91,5 +93,28 @@ class BlueskyUtils {
     $segments = explode(' ', $text);
     array_splice($segments, -$numberOfSegmentsToRemove);
     return implode(' ', $segments) . (count($segments) > 0 ? '…' : '');
+  }
+
+  public static function extractInfoFromHtml ($html): array {
+    $result = [];
+    $dom = new Dom();
+    $dom->loadStr($html);
+
+    $title = $dom->find('head title')[0];
+    $result['title'] = $title?->text();
+
+    $ogTitleEl = $dom->find('meta[property="og:title"]')[0];
+    $result['ogTitle'] = $ogTitleEl?->getAttribute('content');
+
+    $ogDescriptionEl = $dom->find('meta[property="og:description"]')[0];
+    $result['ogDescription'] = $ogDescriptionEl?->getAttribute('content');
+
+    $ogImageEl = $dom->find('meta[property="og:image"]')[0];
+    $result['ogImage'] = $ogImageEl?->getAttribute('content');
+
+    $ogImageTypeEl = $dom->find('meta[property="og:image:type"]')[0];
+    $result['ogImageType'] = $ogImageTypeEl?->getAttribute('content');
+
+    return $result;
   }
 }

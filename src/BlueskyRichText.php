@@ -83,47 +83,38 @@ class BlueskyRichText {
       ]
     ];
 
+    // Fail after 15 seconds waiting for HTML content.
     $ctx = stream_context_create(array('http'=> [
         'timeout' => 15
       ]
     ));
 
-    // $linkHtml = $http->get($url);
     $linkHtml = file_get_contents($url, false, $ctx);
 
     if ($linkHtml === null) {
       return null;
     }
 
-    libxml_use_internal_errors(true);
-    $doc = new DOMDocument();
-    $doc->loadHTML($linkHtml);
-    libxml_clear_errors();
-    $xpath = new DOMXPath($doc);
+    $linkInfo = BlueskyUtils::extractInfoFromHtml($linkHtml);
 
     // Get title
-    $entries = $xpath->evaluate("//meta[@property='og:title']/@content", $doc);
-    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-      $embed['external']['title'] = trim($entries->item(0)->value);
+    $title = $linkInfo['ogTitle'] ?? $linkInfo['title'];
+    if ($title !== null) {
+      $embed['external']['title'] = $title;
     }
 
     // Get description
-    $entries = $xpath->evaluate("//meta[@property='og:description']/@content", $doc);
-    if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-      $embed['external']['description'] = trim($entries->item(0)->value);
+    $description = $linkInfo['ogDescription'];
+    if ($description !== null) {
+      $embed['external']['description'] = $description;
     }
 
     // Get image
     try {
-      $entries = $xpath->evaluate("//meta[@property='og:image']/@content", $doc);
-      if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-        $imageUrl = $entries->item(0)->value;
+      $imageUrl = $linkInfo['ogImage'];
+      $imageMimeType = $linkInfo['ogImageType'];
 
-        $entries = $xpath->evaluate("//meta[@property='og:image:type']/@content", $doc);
-        if ($entries instanceof DOMNodeList && $entries->count() > 0) {
-          $imageMimeType = $entries->item(0)->value;
-        }
-
+      if ($imageUrl !== null) {
         $imageData = file_get_contents($imageUrl, false, $ctx);
         $imageMimeType = $imageMimeType ?? mime_content_type($imageData);
 
