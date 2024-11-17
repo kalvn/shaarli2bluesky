@@ -21,12 +21,17 @@ In Bluesky, go to [Settings > Application passwords](https://bsky.app/settings/a
 Choose any name you like (`shaarli2bluesky` is a good choice) and submit. Then, copy the password, you'll need it later.
 
 ### 2. Install the plugin
-Download and copy the files under `/plugins/shaarli2bluesky` directory of your Shaarli installation. There are several ways to do so. Here, I'll be using Git.
+[Download the latest version from releases](https://github.com/kalvn/shaarli2bluesky/releases) and decompress files under `/plugins/shaarli2bluesky` directory of your Shaarli installation.
+
+Below is an example with command line.
 
 Run the following command from within the `/plugins` directory:
 
 ```bash
-$ git clone https://github.com/kalvn/shaarli2bluesky
+$ wget https://github.com/kalvn/shaarli2bluesky/archive/refs/tags/v0.0.5.tar.gz
+$ tar -xvzf v0.0.5.tar.gz
+$ mv shaarli2bluesky-0.0.5 shaarli2bluesky
+$ rm v0.0.5.tar.gz
 ```
 
 Make sure these new files are readable by your web server (Apache, Nginx, etc.).
