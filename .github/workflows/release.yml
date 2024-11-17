@@ -27,6 +27,12 @@ jobs:
           command: update
           args: --no-dev
 
+      - name: Package
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          zip -r shaarli2bluesky.$tag.zip . -x '*.git*' -x 'tests/*' -x 'README.md' -x '.editorconfig'
+          tar -cvf shaarli2bluesky.$tag.tar.gz --exclude='*.git*' --exclude='tests/*' --exclude='README.md' --exclude='.editorconfig' .
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,4 +42,4 @@ jobs:
           gh release create "$tag" \
             --title="$tag" \
             --draft \
-            shaarli2bluesky.php shaarli2bluesky.css shaarli2bluesky.js shaarli2bluesky.meta edit_link.html src vendor
+            shaarli2bluesky.$tag.zip shaarli2bluesky.$tag.tar.gz
