@@ -29,10 +29,17 @@ Below is an example with command line.
 Run the following command from within the `/plugins` directory:
 
 ```bash
-$ wget https://github.com/kalvn/shaarli2bluesky/archive/refs/tags/v0.0.5.tar.gz
-$ tar -xvzf v0.0.5.tar.gz
-$ mkdir shaarli2bluesky
-$ rm v0.0.5.tar.gz
+# Download the release - adapt the version to the latest available
+wget https://github.com/kalvn/shaarli2bluesky/releases/download/v0.0.5/shaarli2bluesky.v0.0.5.tar.gz
+
+# Create the target directory plugins/shaarli2bluesky if it doesn't exist already
+mkdir shaarli2bluesky
+
+# Decompress the archive
+tar -xvzf shaarli2bluesky.v0.0.5.tar.gz --directory shaarli2bluesky
+
+# Remove the archive
+rm shaarli2bluesky.v0.0.5.tar.gz
 ```
 
 Make sure these new files are readable by your web server (Apache, Nginx, etc.).
