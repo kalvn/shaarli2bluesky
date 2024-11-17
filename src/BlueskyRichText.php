@@ -116,7 +116,18 @@ class BlueskyRichText {
 
       if ($imageUrl !== null) {
         $imageData = file_get_contents($imageUrl, false, $ctx);
-        $imageMimeType = $imageMimeType ?? mime_content_type($imageData);
+
+        if ($imageMimeType === null) {
+          if (function_exists('mime_content_type')) {
+              try {
+                $imageMimeType = mime_content_type($imageData);
+            } catch (Exception $e) {
+              error_log('[shaarli2bluesky] Failed to automatically get Open Graph image mime type. Falling back to [image/png].');
+            }
+          }
+
+          $imageMimeType = $imageMimeType ?? 'image/png';
+        }
 
         if ($imageData !== false) {
           $uploadResponse = $client->uploadBlob($imageData, $imageMimeType);
