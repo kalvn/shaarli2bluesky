@@ -30,8 +30,8 @@ jobs:
       - name: Package
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-          zip -r shaarli2bluesky.$tag.zip . -x '*.git*' -x 'tests/*' -x 'README.md' -x '.editorconfig'
-          tar -cvf shaarli2bluesky.$tag.tar.gz --exclude='*.git*' --exclude='tests/*' --exclude='README.md' --exclude='.editorconfig' .
+          zip -r shaarli2bluesky.$tag.zip src vendor edit_link.html shaarli2bluesky.*
+          tar -cvf shaarli2bluesky.$tag.tar.gz src vendor edit_link.html shaarli2bluesky.*
 
       - name: Create release
         env:
