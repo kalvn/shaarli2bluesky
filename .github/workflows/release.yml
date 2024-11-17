@@ -1,0 +1,38 @@
+name: Release shaarli2bluesky plugin
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+
+      - name: Test
+        uses: php-actions/composer@v6
+        with:
+          command: test
+
+      - name: Remove dev dependencies
+        uses: php-actions/composer@v6
+        with:
+          command: update
+          args: --no-dev
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+
+          gh release create "$tag" \
+            --title="$tag" \
+            --draft \
+            shaarli2bluesky.php shaarli2bluesky.css shaarli2bluesky.js shaarli2bluesky.meta edit_link.html src vendor
