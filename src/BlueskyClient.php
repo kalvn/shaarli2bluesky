@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/BlueskyHttpRequest.php';
-require_once __DIR__ . '/BlueskyRichText.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 class BlueskyClient {
 
@@ -67,23 +66,18 @@ class BlueskyClient {
       $facets = $message->generateFacets();
       $requestBody['record']['facets'] = $facets;
     } catch (Throwable $e) {
-      $errorMessage = '[shaarli2bluesky] Could not make links and tags dynamic: [' . $e->getMessage() . '].';
-      error_log($errorMessage);
-      if (session_status() == PHP_SESSION_ACTIVE) {
-        $_SESSION['errors'][] = $errorMessage;
-      }
+      BlueskyUtils::log('warning', 'Could not make links and tags dynamic: [' . $e->getMessage() . '].');
     }
 
     try {
       $that = $this;
       $embed = $message->generateEmbed($that);
-      $requestBody['record']['embed'] = $embed;
-    } catch (Throwable $e) {
-      $errorMessage = '[shaarli2bluesky] Could not highlight links with Open Graph: [' . $e->getMessage() . '].';
-      error_log($errorMessage);
-      if (session_status() == PHP_SESSION_ACTIVE) {
-        $_SESSION['errors'][] = $errorMessage;
+
+      if ($embed !== null) {
+        $requestBody['record']['embed'] = $embed;
       }
+    } catch (Throwable $e) {
+      BlueskyUtils::log('warning', 'Could not enhance links with Open Graph: [' . $e->getMessage() . '].');
     }
 
     $postResponse = $this->http->post(

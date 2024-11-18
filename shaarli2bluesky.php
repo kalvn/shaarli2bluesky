@@ -15,10 +15,7 @@ use Shaarli\Config\ConfigManager;
 use Shaarli\Plugin\PluginManager;
 use Shaarli\Render\TemplatePage;
 
-require_once 'src/BlueskyClient.php';
-require_once 'src/BlueskyRichText.php';
-require_once 'src/BlueskyMessage.php';
-require_once 'src/BlueskyUtils.php';
+require __DIR__ . '/vendor/autoload.php';
 
 /**
  * The default message format if none is specified.
@@ -46,7 +43,7 @@ function shaarli2bluesky_init ($conf) {
     }
 
     if (!BlueskyUtils::isConfigValid($conf)) {
-        return array('Please set up your Bluesky parameters in plugin administration page.');
+        return ['Please set up your Bluesky parameters in plugin administration page.'];
     }
 }
 
@@ -99,7 +96,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     }
 
     // We make sure not to alter data
-    $link = array_merge(array(), $data);
+    $link = array_merge([], $data);
     $tagsSeparator = $conf->get('general.tags_separator', ' ');
     $blueskyUsername = $conf->get('plugins.BLUESKY_USERNAME');
     $blueskyPassword = $conf->get('plugins.BLUESKY_PASSWORD');
@@ -120,12 +117,10 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     try {
       $client->postMessage($message->generateText());
     } catch (Throwable $e) {
-      error_log('Bluesky API error: '. $e->getMessage());
-
-      if (session_status() == PHP_SESSION_ACTIVE) {
-        $_SESSION['errors'][] = 'Something went wrong when publishing the link on Bluesky. ' . $e->getMessage();
-      }
+      BlueskyUtils::log('error', 'Something went wrong when publishing the link on Bluesky: [' . $e->getMessage() . '].');
     }
+
+    BlueskyUtils::log('success', 'One more post for your Bluesky account!');
 
     return $link;
 }

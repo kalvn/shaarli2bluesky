@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/BlueskyUtils.php';
-require_once __DIR__ . '/BlueskyClient.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Represent a rich text that possibly includes links and tags.
@@ -74,14 +73,7 @@ class BlueskyRichText {
       return null;
     }
 
-    $url = $this->urls[0];
-
-    $embed = [
-      '$type' => 'app.bsky.embed.external',
-      'external' => [
-        'uri' => $url
-      ]
-    ];
+    $embed = new BlueskyEmbed($this->urls[0]);
 
     // Fail after 15 seconds waiting for HTML content.
     $ctx = stream_context_create(array('http'=> [
@@ -89,9 +81,10 @@ class BlueskyRichText {
       ]
     ));
 
-    $linkHtml = file_get_contents($url, false, $ctx);
+    $linkHtml = file_get_contents($embed->getUri(), false, $ctx);
 
     if ($linkHtml === null) {
+      BlueskyUtils::log('warning', 'Failed to retrieve link content.');
       return null;
     }
 
@@ -102,15 +95,16 @@ class BlueskyRichText {
 
     // Title is mandatory. If missing, embed is skipped entirely
     if ($title === null) {
+      BlueskyUtils::log('warning', 'Failed to retrieve link title');
       return null;
     }
 
-    $embed['external']['title'] = $title;
+    $embed->setTitle($title);
 
     // Get description
     $description = $linkInfo['ogDescription'];
     if ($description !== null) {
-      $embed['external']['description'] = $description;
+      $embed->setDescription($description);
     }
 
     // Get image
@@ -123,10 +117,10 @@ class BlueskyRichText {
 
         if ($imageMimeType === null) {
           if (function_exists('mime_content_type')) {
-              try {
+            try {
                 $imageMimeType = mime_content_type($imageData);
-            } catch (Exception $e) {
-              error_log('[shaarli2bluesky] Failed to automatically get Open Graph image mime type. Falling back to [image/png].');
+            } catch (Throwable $e) {
+              BlueskyUtils::log('error', '[shaarli2bluesky] Failed to automatically get Open Graph image mime type. Falling back to [image/png].', false);
             }
           }
 
@@ -136,16 +130,15 @@ class BlueskyRichText {
         if ($imageData !== false) {
           $uploadResponse = $client->uploadBlob($imageData, $imageMimeType);
 
-          $embed['external']['thumb'] = $uploadResponse['blob'];
+          $embed->setThumb($uploadResponse['blob']);
         }
       }
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
       // Image failed to be processed, ignoring.
-      $errorMessage = '[shaarli2bluesky] Could not download or process Open Graph image: [' . $e->getMessage() . '].';
-      error_log($errorMessage);
+      BlueskyUtils::log('warning', 'Could not download or process Open Graph image: [' . $e->getMessage() . '].');
     }
 
-    return $embed;
+    return $embed->toArray();
   }
 
   public function getText (): string {

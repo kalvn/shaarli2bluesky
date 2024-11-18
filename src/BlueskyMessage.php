@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/BlueskyRichText.php';
-require_once __DIR__ . '/BlueskyUtils.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Represent a Shaarli message to be posted on Bluesky.

@@ -3,6 +3,27 @@ require __DIR__ . '/../vendor/autoload.php';
 use PHPHtmlParser\Dom;
 
 class BlueskyUtils {
+  public const LOG_LEVEL_MAPPING = [
+    'success' => 'successes',
+    'warning' => 'warnings',
+    'error' => 'errors'
+  ];
+
+  /**
+   * Log a message
+   * @param $level One of: successes, warnings, errors
+   */
+  public static function log (string $level, string $message, bool $display = true): void {
+    $enhancedMessage = '[shaarli2bluesky] ' . $message;
+
+    if ($level === 'errors') {
+      error_log($enhancedMessage);
+    }
+
+    if ($display && array_key_exists($level, self::LOG_LEVEL_MAPPING) && session_status() == PHP_SESSION_ACTIVE) {
+      $_SESSION[self::LOG_LEVEL_MAPPING[$level]][] = $enhancedMessage;
+    }
+  }
 
   /**
    * Determines whether the configuration is valid or not.
