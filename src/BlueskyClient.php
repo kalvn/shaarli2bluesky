@@ -3,8 +3,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 class BlueskyClient {
 
-  private $domain = 'https://bsky.social';
-
   /**
    * The HTTP instance.
    */
@@ -20,8 +18,8 @@ class BlueskyClient {
   private $username;
   private $password;
 
-  public function __construct ($username, $password) {
-    $this->http = new BlueskyHttpRequest($this->domain . '/xrpc');
+  public function __construct ($username, $password, $domain = 'https://bsky.social') {
+    $this->http = new BlueskyHttpRequest($domain . '/xrpc');
     $this->username = $username;
     $this->password = $password;
   }
@@ -39,7 +37,11 @@ class BlueskyClient {
       ])
     );
 
-    if (array_key_exists('error', $session)) {
+    if (!$session) {
+      throw new Exception('Session creation failed. Check plugin settings.');
+    }
+
+    if (is_array($session) && array_key_exists('error', $session)) {
       throw new Exception('Session creation failed with error [' . $session['error'] . '] and message [' . $session['message'] . '].');
     }
 
@@ -89,7 +91,7 @@ class BlueskyClient {
       json_encode($requestBody)
     );
 
-    if (array_key_exists('error', $postResponse)) {
+    if (is_array($postResponse) && array_key_exists('error', $postResponse)) {
       throw new Exception('Error from Bluesky: [' . $postResponse['error'] . '] [' . $postResponse['message'] . '].');
     }
   }

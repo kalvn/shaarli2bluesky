@@ -98,6 +98,7 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     // We make sure not to alter data
     $link = array_merge([], $data);
     $tagsSeparator = $conf->get('general.tags_separator', ' ');
+    $blueskyDomain = $conf->get('plugins.BLUESKY_DOMAIN') ?? null;
     $blueskyUsername = $conf->get('plugins.BLUESKY_USERNAME');
     $blueskyPassword = $conf->get('plugins.BLUESKY_PASSWORD');
     $blueskyMessageFormat = isset($_POST[SHAARLI2BLUESKY_POST_PARAM_MESSAGE_FORMAT]) ? $_POST[SHAARLI2BLUESKY_POST_PARAM_MESSAGE_FORMAT] : $conf->get('plugins.BLUESKY_MESSAGE_FORMAT', SHAARLI2BLUESKY_MESSAGE_DEFAULT_FORMAT);
@@ -112,12 +113,17 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
 
     $message = new BlueskyMessage($data, $blueskyMessageFormat, $tagsSeparator, SHAARLI2BLUESKY_MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
 
-    $client = new BlueskyClient($blueskyUsername, $blueskyPassword);
+    if (!empty($blueskyDomain)) {
+      $client = new BlueskyClient($blueskyUsername, $blueskyPassword, $blueskyDomain);
+    } else {
+      $client = new BlueskyClient($blueskyUsername, $blueskyPassword);
+    }
 
     try {
       $client->postMessage($message->generateText());
     } catch (Throwable $e) {
       BlueskyUtils::log('error', 'Something went wrong when publishing the link on Bluesky: [' . $e->getMessage() . '].');
+      return $link;
     }
 
     BlueskyUtils::log('success', 'One more post for your Bluesky account!');

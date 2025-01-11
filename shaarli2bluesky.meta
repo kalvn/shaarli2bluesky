@@ -1,5 +1,6 @@
 description="Automatically post your links from Shaarli to Bluesky."
-parameters="BLUESKY_USERNAME;BLUESKY_PASSWORD;BLUESKY_MESSAGE_FORMAT;BLUESKY_REPLACE_URL_BY_PERMALINK_WHEN_TRUNCATING"
+parameters="BLUESKY_DOMAIN;BLUESKY_USERNAME;BLUESKY_PASSWORD;BLUESKY_MESSAGE_FORMAT;BLUESKY_REPLACE_URL_BY_PERMALINK_WHEN_TRUNCATING"
+parameter.BLUESKY_DOMAIN="A custom domain if relevant, otherwise, leave empty"
 parameter.BLUESKY_USERNAME="Your Bluesky handle"
 parameter.BLUESKY_PASSWORD="The application password to use. DO NOT use your default password, create a new specific application password instead in Bluesky settings"
 parameter.BLUESKY_MESSAGE_FORMAT="Placeholders: \${url} \${permalink} \${title} \${tags} \${description}"
