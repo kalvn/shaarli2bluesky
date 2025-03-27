@@ -114,6 +114,11 @@ function hook_shaarli2bluesky_save_link ($data, $conf) {
     $message = new BlueskyMessage($data, $blueskyMessageFormat, $tagsSeparator, SHAARLI2BLUESKY_MESSAGE_MAX_LENGTH, $blueskyReplaceUrlByPermalinkWhenTruncating);
 
     if (!empty($blueskyDomain)) {
+      // Add protocol if missing from config.
+      if (!substr($blueskyDomain, 0, 8) === 'https://') {
+        $blueskyDomain = 'https://' . $blueskyDomain;
+      }
+
       $client = new BlueskyClient($blueskyUsername, $blueskyPassword, $blueskyDomain);
     } else {
       $client = new BlueskyClient($blueskyUsername, $blueskyPassword);
